@@ -22,6 +22,15 @@ Your final app should:
 - Display the plan clearly (and ideally explain the reasoning)
 - Include tests for the most important scheduling behaviors
 
+## Features
+
+- **Add pets** — store each pet's name, species, age, and care needs.
+- **Schedule care tasks** — add tasks (feeding, walks, medication, grooming) with a time and frequency.
+- **Sorting by time** — the schedule is ordered chronologically, handling `AM`/`PM` times (`Scheduler.sort_by_time()`).
+- **Conflict warnings** — flags when two tasks are set for the exact same time (`Scheduler.detect_conflicts()`).
+- **Daily/weekly recurrence** — creates the next occurrence of a repeating task after it is completed (`Scheduler.create_next_occurrence()`).
+- **Filtering** — view tasks for a single pet or by completion status (`Scheduler.filter_by_pet()`, `Scheduler.filter_by_completion()`).
+
 ## Getting started
 
 ### Setup
@@ -96,25 +105,55 @@ The `Scheduler` class provides simple algorithmic helpers:
 - **Conflict detection** — `Scheduler.detect_conflicts()` returns warning messages when two tasks share the exact same time.
 - **Recurring tasks** — `Scheduler.create_next_occurrence()` creates the next `daily` (+1 day) or `weekly` (+7 days) task, and returns `None` for `once`.
 
-## 📐 Smarter Scheduling
+## Demo Walkthrough
 
-> Fill in once you've implemented scheduling logic.
+The Streamlit app (`streamlit run app.py`) has three main areas:
 
-| Feature | Method(s) | Notes |
-|---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+1. **Add a Pet** — enter a name, species, and age, then click **Add pet**. A success message confirms it, and the pet appears in "Your pets". Pets persist across reruns because they are stored on the `Owner` in `st.session_state`.
+2. **Schedule a Task** — pick one of your pets, type a task description and a time (e.g. `08:00 AM`), then click **Add task**. The task is attached to that pet.
+3. **Today's Schedule** — shows all tasks across pets in a table, automatically **sorted by time**, with a **Status** column (Done/Pending). If two tasks share the exact same time, a yellow **conflict warning** appears above the table so the owner notices it immediately.
 
-## 📸 Demo Walkthrough
+**Example workflow:** add a pet (Luna) → schedule a task ("Feed Luna" at `08:00 AM`) → add another pet (Max) → schedule "Walk Max" at `12:00 PM` → open Today's Schedule to see the ordered plan. Adding a second task at `12:00 PM` triggers a conflict warning.
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
+**Key Scheduler behaviors shown:** chronological sorting (`sort_by_time`), conflict warnings (`detect_conflicts`), completion status, and (in the CLI demo) daily recurrence (`create_next_occurrence`).
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+### CLI Demo Output
 
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+Running `python main.py` demonstrates the same logic in the terminal:
+
+```text
+Original Schedule (unsorted)
+----------------------------
+06:00 PM - Give Luna medication
+08:00 AM - Feed Luna
+12:00 PM - Walk Max
+
+Sorted Schedule
+---------------
+08:00 AM - Feed Luna
+12:00 PM - Walk Max
+06:00 PM - Give Luna medication
+
+Tasks for Luna
+--------------
+06:00 PM - Give Luna medication
+08:00 AM - Feed Luna
+
+Completed Tasks
+---------------
+08:00 AM - Feed Luna
+
+Pending Tasks
+-------------
+06:00 PM - Give Luna medication
+12:00 PM - Walk Max
+
+Recurring Task
+--------------
+Completed: Feed Luna (daily)
+Next occurrence: Feed Luna at 08:00 AM on 2026-07-08
+
+Conflict Warnings
+-----------------
+Conflict: Groom Luna and Walk Max are both scheduled at 12:00 PM.
+```

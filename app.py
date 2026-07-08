@@ -81,10 +81,23 @@ st.divider()
 st.subheader("Today's Schedule")
 
 scheduler = Scheduler()
-today = scheduler.get_today_schedule(owner)
+today = scheduler.get_today_schedule(owner)  # sorted by time of day
 
 if today:
-    for task in today:
-        st.write(f"{task.time} - {task.description}")
+    # Warn about time conflicts first so the owner notices them right away.
+    conflicts = scheduler.detect_conflicts(today)
+    for warning in conflicts:
+        st.warning(warning)
+
+    # Show the sorted schedule in a clean table.
+    schedule_rows = [
+        {
+            "Time": task.time,
+            "Task": task.description,
+            "Status": "Done" if task.is_complete() else "Pending",
+        }
+        for task in today
+    ]
+    st.table(schedule_rows)
 else:
     st.info("No tasks scheduled yet.")

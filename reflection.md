@@ -33,6 +33,8 @@ The initial design stayed mostly the same because the four-class structure match
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
 - How did you decide which constraints mattered most?
 
+The scheduler mainly considers the time of day each task is due, along with its completion status and how often it repeats (once, daily, or weekly). Time mattered most because a daily care plan is really about the order things happen in, so sorting by time gives the owner the clearest view. Completion status and frequency were next, since they let the app hide finished work and roll recurring tasks forward.
+
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
@@ -49,10 +51,14 @@ The scheduler uses a simple conflict detection rule: it only checks whether two 
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
 - What kinds of prompts or questions were most helpful?
 
+I used an AI coding assistant across every phase: brainstorming the four-class design, generating the dataclass skeletons, implementing the sorting, recurrence, and conflict-detection algorithms, and writing the pytest tests. The most effective feature was giving the assistant a tight, phase-scoped task that named the exact method and the expected behavior (for example, "add `sort_by_time` that orders `08:00 AM`, `12:00 PM`, `06:00 PM` correctly"). Specific prompts like that produced code I could drop in with small edits, while vague prompts produced code that did too much. Using a separate chat session for each phase kept the assistant focused on one file and one goal at a time, so it did not drift into rewriting parts of the project that were already finished.
+
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?
+
+When I connected the Streamlit UI, the assistant suggested keeping tasks as a flat list of plain dictionaries in `st.session_state`. I rejected that because it would have created two competing sources of truth and ignored the `Task` and `Pet` classes I had already built. Instead I stored a real `Owner` object in session state and had the UI create actual `Pet` and `Task` objects. I verified the change by running `streamlit run app.py` to confirm pets and tasks persisted across reruns, and by running `python -m pytest` to confirm the backend still behaved as expected.
 
 ---
 
@@ -63,10 +69,14 @@ The scheduler uses a simple conflict detection rule: it only checks whether two 
 - What behaviors did you test?
 - Why were these tests important?
 
+I tested task completion, adding tasks to a pet, sorting tasks by time, daily recurrence (creating the next occurrence), conflict detection for two tasks at the same time, and two edge cases (a new pet starting with no tasks and filtering by completion status). These behaviors are the core of the app, so testing them protects the features the user relies on and catches regressions if the code changes later.
+
 **b. Confidence**
 
 - How confident are you that your scheduler works correctly?
 - What edge cases would you test next if you had more time?
+
+I am fairly confident for the current beginner-level scope, since all seven automated tests pass and cover the main algorithms. With more time I would test overlapping task durations (not just exact-time conflicts), invalid or unusual time strings, the date math for weekly recurrence, and schedules with several conflicts at once.
 
 ---
 
@@ -76,10 +86,16 @@ The scheduler uses a simple conflict detection rule: it only checks whether two 
 
 - What part of this project are you most satisfied with?
 
+I am most satisfied with the clean separation between the backend logic in `pawpal_system.py` and the Streamlit UI in `app.py`. Because the four classes each had one clear responsibility, the UI could simply call `Scheduler` methods, and the smart features (sorting, recurrence, and conflict detection) were all covered by automated tests.
+
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
 
+In another iteration I would upgrade conflict detection to consider task durations and overlapping time windows instead of only exact-time matches, add persistence so data survives closing the app, and let users edit or delete existing tasks from the UI.
+
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+
+The biggest thing I learned was what it means to be the "lead architect" when working with powerful AI tools. The assistant could generate code quickly, but I still had to own the design decisions, keep the scope small, and verify everything by running the app and the tests. Working in separate chat sessions for each phase helped me stay organized, because each session focused on one part of the system and I could review and accept changes deliberately instead of letting the AI reshape the whole project at once.
