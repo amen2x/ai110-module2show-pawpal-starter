@@ -1,92 +1,128 @@
-"""PawPal+ system skeleton.
+"""PawPal+ logic layer.
 
-This file contains simple beginner-friendly class skeletons for the
-PawPal+ pet care app. It is a skeleton only, not a finished app.
+Simple, beginner-friendly classes for a small pet care app:
+Owner, Pet, Task, and Scheduler.
 """
 
 from dataclasses import dataclass, field
 
 
-class Owner:
-    """Represents the user and stores their pets."""
+@dataclass
+class Task:
+    """One pet care activity, such as a walk or feeding."""
 
-    def __init__(self, name, email):
-        self.name = name          # owner's name
-        self.email = email        # owner's email
-        self.pets = []            # list of Pet objects
+    description: str
+    time: str
+    frequency: str = "daily"
+    completed: bool = False
 
-    def add_pet(self, pet):
-        """Add a pet to this owner."""
-        pass
+    def mark_complete(self):
+        """Mark this task as done."""
+        self.completed = True
 
-    def remove_pet(self, pet):
-        """Remove a pet from this owner."""
-        pass
+    def mark_incomplete(self):
+        """Mark this task as not done."""
+        self.completed = False
 
-    def get_pets(self):
-        """Return the owner's pets."""
-        return self.pets
+    def is_complete(self):
+        """Return True if this task is done."""
+        return self.completed
 
 
 @dataclass
 class Pet:
-    """Stores information about each animal and its care needs."""
+    """A pet with its details, care needs, and tasks."""
 
     name: str
     species: str
     age: int
-    care_needs: list = field(default_factory=list)  # list of care needs
+    care_needs: list = field(default_factory=list)
+    tasks: list = field(default_factory=list)
+
+    def add_task(self, task):
+        """Add a task to this pet."""
+        self.tasks.append(task)
+
+    def remove_task(self, task):
+        """Remove a task from this pet."""
+        if task in self.tasks:
+            self.tasks.remove(task)
+
+    def get_tasks(self):
+        """Return this pet's tasks."""
+        return self.tasks
 
     def add_care_need(self, care_need):
-        """Add a care need for this pet."""
-        pass
-
-    def get_care_needs(self):
-        """Return this pet's care needs."""
-        return self.care_needs
+        """Add a care need to this pet."""
+        self.care_needs.append(care_need)
 
 
-@dataclass
-class Task:
-    """Represents a pet care responsibility (walk, feed, groom, medicate)."""
+class Owner:
+    """A pet owner who manages one or more pets."""
 
-    title: str
-    pet: Pet
-    due_time: str
-    priority: int
-    completed: bool = False
+    def __init__(self, name, email):
+        """Create an owner with a name, email, and empty pet list."""
+        self.name = name
+        self.email = email
+        self.pets = []
 
-    def mark_complete(self):
-        """Mark this task as completed."""
-        pass
+    def add_pet(self, pet):
+        """Add a pet to this owner."""
+        self.pets.append(pet)
 
-    def update_due_time(self, new_due_time):
-        """Change when this task is due."""
-        pass
+    def remove_pet(self, pet):
+        """Remove a pet from this owner."""
+        if pet in self.pets:
+            self.pets.remove(pet)
 
-    def is_due_today(self):
-        """Return True if this task is due today."""
-        return False
+    def get_pets(self):
+        """Return this owner's pets."""
+        return self.pets
+
+    def get_all_tasks(self):
+        """Collect and return tasks from all of this owner's pets."""
+        all_tasks = []
+        for pet in self.pets:
+            all_tasks.extend(pet.get_tasks())
+        return all_tasks
 
 
 class Scheduler:
-    """Manages tasks and helps show what needs to be done today."""
+    """Organizes tasks across all of an owner's pets."""
 
-    def __init__(self):
-        self.tasks = []           # list of Task objects
+    def get_all_tasks(self, owner):
+        """Return all tasks belonging to the given owner."""
+        return owner.get_all_tasks()
 
-    def add_task(self, task):
-        """Add a task to the scheduler."""
-        pass
+    def sort_tasks_by_time(self, tasks):
+        """Return the tasks sorted by their time of day."""
+        return sorted(tasks, key=_time_to_minutes)
 
-    def remove_task(self, task):
-        """Remove a task from the scheduler."""
-        pass
+    def get_today_schedule(self, owner):
+        """Return today's tasks for the owner, sorted by time."""
+        tasks = self.get_all_tasks(owner)
+        return self.sort_tasks_by_time(tasks)
 
-    def get_today_tasks(self):
-        """Return the tasks that are due today."""
-        return []
+    def get_pending_tasks(self, owner):
+        """Return the owner's tasks that are not yet complete."""
+        return [task for task in owner.get_all_tasks() if not task.is_complete()]
 
-    def sort_tasks_by_priority(self):
-        """Return the tasks sorted by priority."""
-        return self.tasks
+
+def _time_to_minutes(task):
+    """Convert a task's time string (like '08:00 AM') into minutes for sorting."""
+    time_text = task.time.strip().upper()
+    period = ""
+    if time_text.endswith("AM") or time_text.endswith("PM"):
+        period = time_text[-2:]
+        time_text = time_text[:-2].strip()
+
+    hours, minutes = time_text.split(":")
+    hours = int(hours)
+    minutes = int(minutes)
+
+    if period == "PM" and hours != 12:
+        hours += 12
+    if period == "AM" and hours == 12:
+        hours = 0
+
+    return hours * 60 + minutes
