@@ -15,10 +15,14 @@ A user should be able to see today's tasks in one place so they know what pet ca
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
 
+My initial design used four classes. `Owner` represents the user and stores their pets. `Pet` stores information about each animal and its care needs. `Task` represents a pet care responsibility, like walking, feeding, grooming, or medication. `Scheduler` manages tasks and helps show what needs to be done today.
+
 **b. Design changes**
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
+
+The initial design stayed mostly the same because the four-class structure matched the main actions of the app. I kept the design simple so each class had one clear responsibility.
 
 ---
 

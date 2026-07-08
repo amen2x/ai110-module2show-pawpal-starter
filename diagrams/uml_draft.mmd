@@ -1,0 +1,41 @@
+classDiagram
+    class Owner {
+        name
+        email
+        pets
+        add_pet()
+        remove_pet()
+        get_pets()
+    }
+
+    class Pet {
+        name
+        species
+        age
+        care_needs
+        add_care_need()
+        get_care_needs()
+    }
+
+    class Task {
+        title
+        pet
+        due_time
+        priority
+        completed
+        mark_complete()
+        update_due_time()
+        is_due_today()
+    }
+
+    class Scheduler {
+        tasks
+        add_task()
+        remove_task()
+        get_today_tasks()
+        sort_tasks_by_priority()
+    }
+
+    Owner "1" --> "many" Pet
+    Pet "1" --> "many" Task
+    Scheduler "1" --> "many" Task
