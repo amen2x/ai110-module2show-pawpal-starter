@@ -68,6 +68,15 @@ Sample test output:
 # Paste your pytest output here
 ```
 
+## Smarter Scheduling
+
+The `Scheduler` class provides simple algorithmic helpers:
+
+- **Sorting** — `Scheduler.sort_by_time()` returns tasks ordered by time of day (handles `AM`/`PM`).
+- **Filtering** — `Scheduler.filter_by_pet()` returns the tasks for one pet, and `Scheduler.filter_by_completion()` returns tasks that are complete or pending.
+- **Conflict detection** — `Scheduler.detect_conflicts()` returns warning messages when two tasks share the exact same time.
+- **Recurring tasks** — `Scheduler.create_next_occurrence()` creates the next `daily` (+1 day) or `weekly` (+7 days) task, and returns `None` for `once`.
+
 ## 📐 Smarter Scheduling
 
 > Fill in once you've implemented scheduling logic.

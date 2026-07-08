@@ -38,6 +38,8 @@ The initial design stayed mostly the same because the four-class structure match
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
 
+The scheduler uses a simple conflict detection rule: it only checks whether two tasks have the exact same time. This is easy to understand and works well for a beginner version of PawPal+, but it does not detect more complex conflicts such as overlapping task durations. I chose this tradeoff because exact-time matching keeps the logic readable while still giving the user useful warnings.
+
 ---
 
 ## 3. AI Collaboration

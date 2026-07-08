@@ -5,6 +5,7 @@ Owner, Pet, Task, and Scheduler.
 """
 
 from dataclasses import dataclass, field
+from datetime import date, timedelta
 
 
 @dataclass
@@ -15,6 +16,7 @@ class Task:
     time: str
     frequency: str = "daily"
     completed: bool = False
+    date: str = ""
 
     def mark_complete(self):
         """Mark this task as done."""
@@ -94,18 +96,60 @@ class Scheduler:
         """Return all tasks belonging to the given owner."""
         return owner.get_all_tasks()
 
-    def sort_tasks_by_time(self, tasks):
+    def sort_by_time(self, tasks):
         """Return the tasks sorted by their time of day."""
         return sorted(tasks, key=_time_to_minutes)
+
+    def sort_tasks_by_time(self, tasks):
+        """Alias for sort_by_time, kept for backward compatibility."""
+        return self.sort_by_time(tasks)
 
     def get_today_schedule(self, owner):
         """Return today's tasks for the owner, sorted by time."""
         tasks = self.get_all_tasks(owner)
-        return self.sort_tasks_by_time(tasks)
+        return self.sort_by_time(tasks)
 
     def get_pending_tasks(self, owner):
         """Return the owner's tasks that are not yet complete."""
         return [task for task in owner.get_all_tasks() if not task.is_complete()]
+
+    def filter_by_pet(self, owner, pet_name):
+        """Return the tasks that belong to the pet with the given name."""
+        for pet in owner.get_pets():
+            if pet.name == pet_name:
+                return pet.get_tasks()
+        return []
+
+    def filter_by_completion(self, tasks, completed):
+        """Return the tasks whose completion status matches the given value."""
+        return [task for task in tasks if task.is_complete() == completed]
+
+    def create_next_occurrence(self, task):
+        """Create the next occurrence of a recurring task, or None if it does not repeat."""
+        if task.frequency == "daily":
+            next_date = date.today() + timedelta(days=1)
+        elif task.frequency == "weekly":
+            next_date = date.today() + timedelta(days=7)
+        else:  # "once" (or anything else) does not repeat
+            return None
+        return Task(
+            description=task.description,
+            time=task.time,
+            frequency=task.frequency,
+            date=str(next_date),
+        )
+
+    def detect_conflicts(self, tasks):
+        """Return warning messages for pairs of tasks scheduled at the exact same time."""
+        warnings = []
+        for i in range(len(tasks)):
+            for j in range(i + 1, len(tasks)):
+                if tasks[i].time == tasks[j].time:
+                    warnings.append(
+                        f"Conflict: {tasks[i].description} and {tasks[j].description} "
+                        f"are both scheduled at {tasks[i].time}."
+                    )
+        return warnings
 
 
 def _time_to_minutes(task):
