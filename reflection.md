@@ -2,6 +2,14 @@
 
 ## 1. System Design
 
+**Core user actions**
+
+A user should be able to add a pet by entering the pet's basic information, such as name, type of animal, and care needs, so the system knows who the tasks are for.
+
+A user should be able to schedule a walk or care task for a pet by choosing what needs to happen and when it should happen.
+
+A user should be able to see today's tasks in one place so they know what pet care responsibilities are due soon and can stay organized.
+
 **a. Initial design**
 
 - Briefly describe your initial UML design.
