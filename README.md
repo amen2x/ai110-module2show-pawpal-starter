@@ -87,22 +87,6 @@ tests\test_pawpal.py .......                                             [100%]
 
 The system is reliable for the current beginner-level features because the main class behavior, sorting, recurrence, and conflict detection are covered by automated tests. More complex real-world scheduling cases would need additional tests later.
 
-## 🧪 Testing PawPal+
-
-```bash
-# Run the full test suite:
-pytest
-
-# Run with coverage:
-pytest --cov
-```
-
-Sample test output:
-
-```
-# Paste your pytest output here
-```
-
 ## Smarter Scheduling
 
 The `Scheduler` class provides simple algorithmic helpers:
