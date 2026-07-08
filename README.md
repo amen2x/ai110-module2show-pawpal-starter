@@ -52,6 +52,41 @@ Today's Schedule
 06:00 PM - Give Luna medication
 ```
 
+## Testing PawPal+
+
+Run the automated test suite with:
+
+```bash
+python -m pytest
+```
+
+The tests cover:
+
+- task completion
+- adding tasks to pets
+- sorting tasks by time
+- recurring daily tasks
+- conflict detection
+- basic edge cases (a pet with no tasks, filtering by completion status)
+
+Successful run:
+
+```text
+============================= test session starts =============================
+platform win32 -- Python 3.13.14, pytest-9.0.3, pluggy-1.6.0
+collected 7 items
+
+tests\test_pawpal.py .......                                             [100%]
+
+============================== 7 passed in 0.05s ==============================
+```
+
+### Confidence Level
+
+★★★★☆ 4/5
+
+The system is reliable for the current beginner-level features because the main class behavior, sorting, recurrence, and conflict detection are covered by automated tests. More complex real-world scheduling cases would need additional tests later.
+
 ## 🧪 Testing PawPal+
 
 ```bash
